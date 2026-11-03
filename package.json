@@ -50,7 +50,16 @@
     "@types/node": "25.5.0"
   },
   "license": "MIT",
-  "author": "jiuai233",
+  "author": {
+    "name": "syansunyang-collab",
+    "url": "https://github.com/syansunyang-collab"
+  },
+  "contributors": [
+    {
+      "name": "jiuai233",
+      "url": "https://github.com/jiuai233"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jiuai233/pi-prompt-suggestions.git"
