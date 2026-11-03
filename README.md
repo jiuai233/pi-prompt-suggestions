@@ -18,7 +18,13 @@
 需要 Node.js 24 或更高版本及 Pi。当前开发验证使用 Pi SDK 1.4.0。
 
 ```sh
-pi install git:github.com/jiuai233/pi-prompt-suggestions@v1.3.1
+pi install npm:@jiuai233/pi-prompt-suggestions
+```
+
+也可从 GitHub 安装指定版本：
+
+```sh
+pi install git:github.com/jiuai233/pi-prompt-suggestions@v1.3.2
 ```
 
 安装后，已有会话执行 `/reload`。

@@ -38,6 +38,8 @@ export class SuggestionEditor extends CustomEditor {
   }
 
   override handleInput(data: string): void {
+    // Terminal focus reports are notifications, not editing actions.
+    if (data === "\x1b[I" || data === "\x1b[O") return;
     if (this.suggestion && this.getText() === "" && !this.isShowingAutocomplete()) {
       if (matchesKey(data, "tab")) {
         const text = this.suggestion;

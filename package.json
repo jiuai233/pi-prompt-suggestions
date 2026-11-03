@@ -1,6 +1,6 @@
 {
   "name": "@jiuai233/pi-prompt-suggestions",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "type": "module",
   "description": "Predict the next user message with an independent model and optional ghost text for Pi",
   "keywords": [
