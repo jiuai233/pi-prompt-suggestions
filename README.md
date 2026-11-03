@@ -79,7 +79,8 @@ npm run typecheck
 
 ## 作者与贡献
 
-[@syansunyang-collab](https://github.com/syansunyang-collab) 是本插件的主作者。
+- **主作者**：[@syansunyang-collab](https://github.com/syansunyang-collab)。
+- **项目整理与维护**：[@jiuai233](https://github.com/jiuai233)。
 
 欢迎通过 [Issues](https://github.com/jiuai233/pi-prompt-suggestions/issues) 反馈问题，或提交 Pull Request 参与改进。
 
