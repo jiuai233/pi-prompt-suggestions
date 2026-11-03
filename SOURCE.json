@@ -1,0 +1,30 @@
+{
+  "pluginVersion": "1.3.1",
+  "sourceCommit": "1e87b9bf91433539033ecf9a792c8cefd976530e",
+  "pluginCommit": "e6e80405b8ef0d98928aac0e4a880e214774886a",
+  "createdAt": "2026-11-02T15:16:52.379393+00:00",
+  "sdkVersion": "1.4.0",
+  "piwebUpstream": "agegr/pi-web v0.13.0",
+  "exportAdjustments": [
+    "plugin/package.json: standalone typecheck command",
+    "plugin/tsconfig.json: remove monorepo paths mappings",
+    "plugin/editor.test.mjs and compaction.test.mjs: SDK imports point to root node_modules"
+  ],
+  "runtimeSourceHashes": {
+    "api.mjs": "2d1ebc77a6272e5ce50e55f616fa21530a08dfd3f9409077dc86a971ef642d50",
+    "core.mjs": "139e9c2ce8e7a251cf1e5338d75f0bb885986895bd7656120f4b68535853b9d6",
+    "editor.ts": "49959bc3d6fecde046ec78532df847937cc7c9b6827e630be4fee7450c9b3d9e",
+    "index.ts": "61b122b5f21d7be07f6b3de8bdbe7de95b3301106d73dd8099b31a33fd5a0322",
+    "preferences.mjs": "4df80444d75a407b9b32edfe76908008dbb04ae3076b1348bb156239edbff62a",
+    "settings.mjs": "7fd0433f5f5ffbbadbc5a2a992431d73f34c9fdbb9350fc3a636264cb737dad8",
+    "threads.mjs": "f465ec44de78c38df6d3b06625183d22ffb65e32b57748a920868ebbc901f786"
+  },
+  "excluded": [
+    "node_modules",
+    ".git",
+    "user auth/settings/models",
+    "real conversations",
+    "prediction thread checkpoints",
+    "production logs"
+  ]
+}

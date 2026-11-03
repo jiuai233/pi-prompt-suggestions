@@ -1,0 +1,85 @@
+// Original: apps/piweb/web/components/ChatInput.tsx:781-812
+  const [promptSuggestionDismissed, setPromptSuggestionDismissed] = useState(false);
+  const dismissPromptSuggestion = useCallback(() => {
+    setPromptSuggestionDismissed(true);
+    onDismissPromptSuggestion?.();
+  }, [onDismissPromptSuggestion]);
+
+  // Only a new run re-enables predictions after editing or dismissing one.
+  useLayoutEffect(() => {
+    if (isStreaming) setPromptSuggestionDismissed(false);
+  }, [isStreaming]);
+  useEffect(() => {
+    if ((value || attachedImages.length) && !promptSuggestionDismissed) dismissPromptSuggestion();
+  }, [value, attachedImages.length, promptSuggestionDismissed, dismissPromptSuggestion]);
+
+  const visiblePromptSuggestion = !compact && !isStreaming && !isCompacting && !modelSwitching
+    && !builtinCommandPending && !value && !attachedImages.length && !pendingImageCountRef.current
+    && !isComposingRef.current && !promptSuggestionDismissed
+    && !historyMenuOpen && !slashMenuOpen && !atMenuOpen
+    && !toolDropdownOpen && !thinkingDropdownOpen && !controlsMenuOpen
+    && !queuedMessages?.steering.length && !queuedMessages?.followUp.length
+    ? promptSuggestion : null;
+
+  const acceptPromptSuggestion = useCallback(() => {
+    const ta = textareaRef.current;
+    if (!visiblePromptSuggestion || !ta || ta.value || pendingImageCountRef.current
+      || isComposingRef.current
+      || Date.now() - lastCompositionEndAtRef.current < COMPOSITION_END_ENTER_GRACE_MS) return;
+    dismissPromptSuggestion();
+    replaceTextareaRange(ta, 0, 0, visiblePromptSuggestion);
+    valueRef.current = ta.value;
+    setValue(ta.value);
+  }, [visiblePromptSuggestion, dismissPromptSuggestion]);
+
+// Original: apps/piweb/web/components/ChatInput.tsx:1558-1577
+          applyAtCompletion(atMatches[atActiveIndex]);
+          return;
+        }
+      }
+
+      // Completion menus above retain priority over the empty-composer prediction.
+      if (!isComposing) {
+        if (e.key === "Escape" && !isStreaming) {
+          e.preventDefault();
+          dismissPromptSuggestion();
+          return;
+        }
+        if (visiblePromptSuggestion && e.key === "Tab" && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && !recentlyComposed) {
+          e.preventDefault();
+          acceptPromptSuggestion();
+          return;
+        }
+      }
+
+      if (e.key === "ArrowUp" && !isComposing && !isStreaming && inputHistory.length > 0 && value.trim().length === 0) {
+
+// Original: apps/piweb/web/components/ChatInput.tsx:2384-2396
+          {visiblePromptSuggestion && (
+            <div
+              className="chat-input-textarea"
+              ref={promptSuggestionRef}
+              aria-hidden="true"
+              data-prompt-suggestion
+              style={{
+                position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden",
+                whiteSpace: "pre-wrap", overflowWrap: "anywhere", color: "var(--text-dim)",
+                fontSize: "var(--chat-content-font-size, 14px)", lineHeight: 1.6,
+              }}
+            >{visiblePromptSuggestion}</div>
+          )}
+
+// Original: apps/piweb/web/components/ChatInput.tsx:2456-2468
+          {visiblePromptSuggestion && (
+            <button
+              type="button"
+              aria-label="采用"
+              aria-keyshortcuts="Tab"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={acceptPromptSuggestion}
+              style={{
+                alignSelf: "flex-end", flexShrink: 0, padding: "7px 10px",
+                border: "1px solid var(--border)", borderRadius: 8,
+                background: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 13,
+              }}
+            >{isMobile ? "采用" : "Tab"}</button>

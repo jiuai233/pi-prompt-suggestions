@@ -1,0 +1,31 @@
+// Original: apps/piweb/web/hooks/useAgentSession.ts:449-462
+  const [promptSuggestion, setPromptSuggestion] = useState<string | null>(null);
+  const promptSuggestionDismissedRef = useRef(false);
+  // State reads must not overwrite a newer event, edit, or run boundary.
+  const promptSuggestionVersionRef = useRef(0);
+  const dismissPromptSuggestion = useCallback(() => {
+    promptSuggestionDismissedRef.current = true;
+    promptSuggestionVersionRef.current += 1;
+    setPromptSuggestion(null);
+  }, []);
+  useLayoutEffect(() => {
+    promptSuggestionDismissedRef.current = false;
+    promptSuggestionVersionRef.current += 1;
+    setPromptSuggestion(null);
+  }, [session?.id, newSessionDraftKey]);
+
+// Original: apps/piweb/web/hooks/useAgentSession.ts:1827-1840
+  const handleAgentEvent = useCallback((event: AgentEvent) => {
+    switch (event.type) {
+      case "prompt_suggestion":
+        if (event.text === null || typeof event.text === "string") {
+          promptSuggestionVersionRef.current += 1;
+          if (!promptSuggestionDismissedRef.current) setPromptSuggestion(event.text);
+        }
+        break;
+      case "connected": {
+        promptSuggestionVersionRef.current += 1;
+        setPromptSuggestion(null);
+        dispatch({ type: "end" });
+        if (Array.isArray(event.pendingExtensionUiIds)) {
+          // The server replays what it still holds right after this event.

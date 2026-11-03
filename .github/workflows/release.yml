@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: 核对版本标签
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const manifests = ['package.json', 'plugin/package.json', 'plugin/unit.json'];
+          for (const file of manifests) {
+            const { version } = JSON.parse(fs.readFileSync(file, 'utf8'));
+            if (process.env.RELEASE_TAG !== `v${version}`) {
+              throw new Error(`标签与 ${file} 的版本 ${version} 不一致`);
+            }
+          }
+          NODE
+      - name: 安装依赖
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: 运行测试
+        run: npm test
+      - name: 检查类型
+        run: npm run typecheck
+      - name: 打包
+        run: |
+          mkdir -p dist
+          npm pack --ignore-scripts --pack-destination dist
+      - name: 创建 Release 草稿
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          options=(--draft --verify-tag --generate-notes --title "$RELEASE_TAG")
+          if [[ "$RELEASE_TAG" == *-* ]]; then options+=(--prerelease); fi
+          gh release create "$RELEASE_TAG" dist/*.tgz "${options[@]}"

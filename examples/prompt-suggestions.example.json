@@ -1,0 +1,7 @@
+{
+  "enabled": false,
+  "provider": "xai",
+  "modelId": "grok-4.7",
+  "thinkingLevel": "low",
+  "preferences": "先比较原理与差异。\n目标已经明确时直接完成结果。"
+}
