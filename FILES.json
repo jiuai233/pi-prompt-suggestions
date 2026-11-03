@@ -1,0 +1,285 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 63,
+      "sha256": "992bc25916a48ec50e76fd1c1ca79eb1e3ca006d8842db831348375b145ec0a1"
+    },
+    {
+      "path": "AGENT-HANDOFF.md",
+      "bytes": 2326,
+      "sha256": "e037473239c69dc29c9bde5621b4fb9aac34f4dea08a318ed6cc1e9f7d146709"
+    },
+    {
+      "path": "examples/minimal-core.mjs",
+      "bytes": 1103,
+      "sha256": "6b6ed5bc472b4099f3e7c48f64171f238ab94be9a5328cf0a9dacd4e053f798b"
+    },
+    {
+      "path": "examples/preferences.txt",
+      "bytes": 442,
+      "sha256": "bb84ed56683274737599f11a0936af8487223f1bf9cae153250f857bcc5f9057"
+    },
+    {
+      "path": "examples/prompt-suggestions.example.json",
+      "bytes": 187,
+      "sha256": "51be8615012c5c645a9b18e50838ea80caf88e4c08939eb5e1480e275dc866bb"
+    },
+    {
+      "path": "host-reference/piweb/app/api/prompt-suggestions/settings/route.ts",
+      "bytes": 1812,
+      "sha256": "47610e3b33d7537e8c412e7fdd982314e71c79eb47fb8dffbc67277b7216951b"
+    },
+    {
+      "path": "host-reference/piweb/components/ChatInput.prompt-suggestions.test.mjs",
+      "bytes": 21027,
+      "sha256": "de7af90603694a39616c148f76afd940af5e90ecadefc3d659d6614c0aa5c70c"
+    },
+    {
+      "path": "host-reference/piweb/components/ChatInput.tsx.excerpt.txt",
+      "bytes": 3853,
+      "sha256": "7455813c15cb6c25decc8e690bc247cd6f98739f05e9c3ab66e2cebf15ef3b02"
+    },
+    {
+      "path": "host-reference/piweb/components/ModelsConfig.tsx.excerpt.txt",
+      "bytes": 1388,
+      "sha256": "e5ad8b453a531a36f70e4bc0e67bb210e1fca4bdea9436402425e9983e96f883"
+    },
+    {
+      "path": "host-reference/piweb/components/PromptSuggestionSettings.tsx",
+      "bytes": 13546,
+      "sha256": "1db68d07f5b5255fa9ef7381c5f1a90a2df5cb13393deb95cb07b21404f4fb84"
+    },
+    {
+      "path": "host-reference/piweb/hooks/useAgentSession.ts.excerpt.txt",
+      "bytes": 1427,
+      "sha256": "fbf91499cea3eb146e166fb6bb39e0d1ce176a2a550a0fa36814b7e87ea6235f"
+    },
+    {
+      "path": "host-reference/piweb/lib/prompt-suggestion-command.ts",
+      "bytes": 972,
+      "sha256": "ab90ec4898c21b5a4ac1a9d638f4ebeb3a5ac8db040abba5b7e569d185564e15"
+    },
+    {
+      "path": "host-reference/piweb/lib/prompt-suggestion-models.ts",
+      "bytes": 2268,
+      "sha256": "1896ca6bad283fa0c65abb33d211ca6c4c70d3b9563b09fdc32360d2e1833d07"
+    },
+    {
+      "path": "host-reference/piweb/lib/prompt-suggestion-settings.test.mjs",
+      "bytes": 2393,
+      "sha256": "d6877bc3e2a45a2c6959ebc5f5959ac94e12efefcf190bf3647ef1f5a85c433d"
+    },
+    {
+      "path": "host-reference/piweb/lib/prompt-suggestion-settings.ts",
+      "bytes": 1698,
+      "sha256": "4e632b5e44f302c91893c559563f1f0cbbfd02783185415819d5a958330ed3e0"
+    },
+    {
+      "path": "host-reference/piweb/lib/prompt-suggestions-plugin.ts",
+      "bytes": 1433,
+      "sha256": "7732616b636240d58fe330bfb2b96d3bb92f50424fc6a413f6b4c5abbd38204b"
+    },
+    {
+      "path": "host-reference/piweb/lib/prompt-suggestions.ts",
+      "bytes": 1690,
+      "sha256": "75559fdcc38efd87db05dc9c1703d7c1cde67d04e17c10fd8a140a4bf7b7d3e2"
+    },
+    {
+      "path": "host-reference/piweb/lib/rpc-manager.ts.excerpt.txt",
+      "bytes": 9739,
+      "sha256": "894a79f69000752d7c0f37f17c971edc01a3df89db8f01d6796dd896faac97b5"
+    },
+    {
+      "path": "host-reference/piweb/LICENSE",
+      "bytes": 1062,
+      "sha256": "19cee3b1b8fd9b42f9515366bc1a7dfaaf22fcb006234ebb85ff2f6f8c52eb2b"
+    },
+    {
+      "path": "host-reference/piweb/tests/prompt-suggestion-settings-ui.test.mjs",
+      "bytes": 21922,
+      "sha256": "f81221ae90bea99f1248941ab9c0bc69889eae3f32acd9d946261487bc49e84b"
+    },
+    {
+      "path": "host-reference/piweb/tests/prompt-suggestions.test.mjs",
+      "bytes": 19393,
+      "sha256": "2e714331a30e5ab4cfed1432222bf6b863fe8676c5d602e50b1bf9c29ed4f6de"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 62423,
+      "sha256": "b5b06ec9e22ac08d53e7070233d88680be8441d2ce35d9fe82514b91a7db65d9"
+    },
+    {
+      "path": "package.json",
+      "bytes": 910,
+      "sha256": "c452295bf8335fcef5b03a0be118c87ff2442973430236cab72457df5dc14668"
+    },
+    {
+      "path": "plugin/api.d.mts",
+      "bytes": 2289,
+      "sha256": "5a029a9c3fc0fc480156430321218e8141d793e2ecb5da3afd205d6d5bb9412d"
+    },
+    {
+      "path": "plugin/api.mjs",
+      "bytes": 7887,
+      "sha256": "2d1ebc77a6272e5ce50e55f616fa21530a08dfd3f9409077dc86a971ef642d50"
+    },
+    {
+      "path": "plugin/api.test.mjs",
+      "bytes": 6009,
+      "sha256": "42de34f2c0fbd02e60630b489a40f5ca169c7c96e681dd829098e6df7c35bb32"
+    },
+    {
+      "path": "plugin/codex.test.mjs",
+      "bytes": 7826,
+      "sha256": "af00b7e94e055722a9546c0dc9c7d54435a849f09bb6176da35c2284b203b016"
+    },
+    {
+      "path": "plugin/compaction.test.mjs",
+      "bytes": 8331,
+      "sha256": "8af9b77840016f76cb213ef235f41b1512e1c4b7145ea0b86baf225eb968c966"
+    },
+    {
+      "path": "plugin/core.d.mts",
+      "bytes": 1553,
+      "sha256": "590e7913d11d4dcdf0371e8de83bff2d009eb0e07491e2f71fcbbca35eb5fde3"
+    },
+    {
+      "path": "plugin/core.mjs",
+      "bytes": 9304,
+      "sha256": "139e9c2ce8e7a251cf1e5338d75f0bb885986895bd7656120f4b68535853b9d6"
+    },
+    {
+      "path": "plugin/core.test.mjs",
+      "bytes": 6657,
+      "sha256": "dcee6a85126d596617d2915e04d13df48faee81ab9b075b121a8e5e0a19f32d3"
+    },
+    {
+      "path": "plugin/editor.test.mjs",
+      "bytes": 18225,
+      "sha256": "2885732684cb10e5aa95660736820d096f9a4ec71036e94b27abd960d485faf8"
+    },
+    {
+      "path": "plugin/editor.ts",
+      "bytes": 2632,
+      "sha256": "49959bc3d6fecde046ec78532df847937cc7c9b6827e630be4fee7450c9b3d9e"
+    },
+    {
+      "path": "plugin/index.ts",
+      "bytes": 7910,
+      "sha256": "61b122b5f21d7be07f6b3de8bdbe7de95b3301106d73dd8099b31a33fd5a0322"
+    },
+    {
+      "path": "plugin/lifecycle.test.mjs",
+      "bytes": 6052,
+      "sha256": "31ae2f4eb5c598199b1bd24207f328036de441f9702cdcf7750bd3272f2c7c09"
+    },
+    {
+      "path": "plugin/package-lock.json",
+      "bytes": 56703,
+      "sha256": "687fc22747214fb096f1688531ba4b56b85c3a101c473a093e07f4bf4d451308"
+    },
+    {
+      "path": "plugin/package.json",
+      "bytes": 768,
+      "sha256": "e8b49797dffba6e5c5e90389639c2b39249f064b8018d7d59def661de80107fb"
+    },
+    {
+      "path": "plugin/persistent.test.mjs",
+      "bytes": 8144,
+      "sha256": "ec4f5c7205b704abf4fd12e79d7621b64c753c3804ae55b4593a6fd4818fc394"
+    },
+    {
+      "path": "plugin/preferences.mjs",
+      "bytes": 944,
+      "sha256": "4df80444d75a407b9b32edfe76908008dbb04ae3076b1348bb156239edbff62a"
+    },
+    {
+      "path": "plugin/README.md",
+      "bytes": 9185,
+      "sha256": "c1297adac45510d51107aed9d8c2e6cd9900900f78ba7c3c34c92b64230d82ca"
+    },
+    {
+      "path": "plugin/settings-concurrency.test.mjs",
+      "bytes": 5898,
+      "sha256": "ebbdfe9925106f30e74ed346b0303706065862d19e7dc4c5b2bab8ca60021eb0"
+    },
+    {
+      "path": "plugin/settings.mjs",
+      "bytes": 3837,
+      "sha256": "7fd0433f5f5ffbbadbc5a2a992431d73f34c9fdbb9350fc3a636264cb737dad8"
+    },
+    {
+      "path": "plugin/test/thread-worker.mjs",
+      "bytes": 1076,
+      "sha256": "14b271da11f0ca6b089ecd33b171d53373e4c76fa20509391c381822783547f8"
+    },
+    {
+      "path": "plugin/threads.mjs",
+      "bytes": 2117,
+      "sha256": "f465ec44de78c38df6d3b06625183d22ffb65e32b57748a920868ebbc901f786"
+    },
+    {
+      "path": "plugin/tsconfig.json",
+      "bytes": 285,
+      "sha256": "61c3128b192b515fd90898e038c4238f4ef9e961d234c7f2820b2e3408535883"
+    },
+    {
+      "path": "plugin/unit.json",
+      "bytes": 232,
+      "sha256": "aee6ae5bfb2bf7494fd22e2e5769a68875c9e16624d944d4eb00b6332625cdc9"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6098,
+      "sha256": "b9790b30ef24c9cf22a0002aff3c8709284f124115eff21b56f2df515c496b52"
+    },
+    {
+      "path": "scripts/set-preferences.mjs",
+      "bytes": 807,
+      "sha256": "a3a9bc26a04867c474747d7eabeda658c838d53b695a094cdce4fd90e00b69db"
+    },
+    {
+      "path": "scripts/set-preferences.test.mjs",
+      "bytes": 1557,
+      "sha256": "d6f0c773ae5100e7b5e9fe52b38d2b0e7a5a0ab646d39e99acd7d2f1ea6dcdcc"
+    },
+    {
+      "path": "skills/develop-prompt-suggestions/references/configuration.md",
+      "bytes": 5812,
+      "sha256": "5a95d309dbef3672b9eb21421a9444546ea0e910e3fde9787b076ed012693363"
+    },
+    {
+      "path": "skills/develop-prompt-suggestions/references/design.md",
+      "bytes": 7962,
+      "sha256": "d342653e27d4c38cc1997d86bd9ecbbb5315eda3c96627e8bad8811aa5307848"
+    },
+    {
+      "path": "skills/develop-prompt-suggestions/references/integration.md",
+      "bytes": 6443,
+      "sha256": "0ac000c5efdb5cd9733216753afcb464a04bdf6af05c38e66910ec81d70dfd0d"
+    },
+    {
+      "path": "skills/develop-prompt-suggestions/references/verification.md",
+      "bytes": 3480,
+      "sha256": "67e3143268322b775446de2557092269b68ed0f1a9599bd72db6e3a76e6099ba"
+    },
+    {
+      "path": "skills/develop-prompt-suggestions/SKILL.md",
+      "bytes": 3612,
+      "sha256": "3730f3f129b03419e911a8f40f6e27132edbc3187a55593e51becc89cb208708"
+    },
+    {
+      "path": "SOURCE.json",
+      "bytes": 1348,
+      "sha256": "b96db25b7eb299838a6cb6c673a60bd462750b5fdef336a668a803191d7cc195"
+    },
+    {
+      "path": "VERIFICATION.md",
+      "bytes": 2637,
+      "sha256": "7ec38cf863abd646c456ce660584a0173e4c1a0a5fb3d74ddab072cee7356cc9"
+    }
+  ]
+}

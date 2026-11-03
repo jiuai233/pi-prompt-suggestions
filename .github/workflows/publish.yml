@@ -1,0 +1,63 @@
+name: Publish npm
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 已通过检查的版本标签
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: 核对版本标签
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const manifests = ['package.json', 'plugin/package.json', 'plugin/unit.json'];
+          for (const file of manifests) {
+            const { version } = JSON.parse(fs.readFileSync(file, 'utf8'));
+            if (process.env.RELEASE_TAG !== `v${version}`) {
+              throw new Error(`标签与 ${file} 的版本 ${version} 不一致`);
+            }
+          }
+          NODE
+      - name: 安装依赖
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: 运行测试
+        run: npm test
+      - name: 检查类型
+        run: npm run typecheck
+      - name: 发布 npm 包
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          options=(--access public --ignore-scripts)
+          if [[ "$PRERELEASE" == true || "$RELEASE_TAG" == *-* ]]; then options+=(--tag next); fi
+          npm publish "${options[@]}"

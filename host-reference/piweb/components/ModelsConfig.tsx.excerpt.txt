@@ -1,0 +1,25 @@
+// Original: apps/piweb/web/components/ModelsConfig.tsx:2200-2208
+
+  // Resolve current detail
+  const detailContent = (() => {
+    if (!selection) return null;
+    if (selection.type === "suggestions") {
+      return <PromptSuggestionSettingsDetail key={JSON.stringify(cwd)} cwd={cwd} draftRef={suggestionDraft} />;
+    }
+    if (selection.type === "voice") {
+      return (
+
+// Original: apps/piweb/web/components/ModelsConfig.tsx:2286-2298
+                <ConfigSidebarText className="is-grow">{t("voiceSettings.title")}</ConfigSidebarText>
+              </ConfigSidebarItem>
+              <ConfigSidebarItem
+                active={selection?.type === "suggestions"}
+                onClick={() => setSelection({ type: "suggestions" })}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ color: "var(--text-dim)", flexShrink: 0 }}>
+                  <path d="M4 5h16v11H9l-5 4V5Z" />
+                  <path d="M8 9h8M8 12h5" />
+                </svg>
+                <ConfigSidebarText className="is-grow">{promptSuggestionCopy(locale).title}</ConfigSidebarText>
+              </ConfigSidebarItem>
+              {(loading || activeOAuth.length > 0 || activeApiKey.length > 0 || providers.length > 0) && (

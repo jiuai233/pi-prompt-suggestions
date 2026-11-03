@@ -1,0 +1,6 @@
+node_modules/
+*.tsbuildinfo
+.agent-data/
+preferences.local.txt
+dist/
+*.tgz

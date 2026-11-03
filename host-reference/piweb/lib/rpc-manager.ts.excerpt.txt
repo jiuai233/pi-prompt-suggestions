@@ -1,0 +1,187 @@
+// Original: apps/piweb/web/lib/rpc-manager.ts:400-416
+  // Whether the last run ended because it was stopped (pi 1.1's `agent_settled.aborted`), not finished.
+  private lastRunAborted = false;
+  private suggestionRequest: { model: Model<Api>; messages: Message[] } | null = null;
+  // Set by a run that settled without being stopped; a handled command reuses the
+  // completion flag above but is not a new conversation turn to predict after.
+  private suggestionAfterSettle = false;
+  private restoreSuggestionStream: (() => void) | null = null;
+  private unsubscribeSuggestionSettings: (() => void) | null = null;
+  private suggestionSettingsRevision = 0;
+  private readonly promptSuggestions = new PromptSuggestions((text) => {
+    this.emit({ type: "prompt_suggestion", text });
+  });
+  private promptAdmissionTail: Promise<void> = Promise.resolve();
+  private activePrompt: PromptRun | undefined;
+  private extensionsBound = false;
+  private extensionBindingPromise: Promise<void> | null = null;
+  private extensionBindingError: unknown = null;
+
+// Original: apps/piweb/web/lib/rpc-manager.ts:613-656
+  start(): void {
+    this.unsubscribeSuggestionSettings = subscribePromptSuggestionsEnabled(() => {
+      this.suggestionSettingsRevision++;
+      this.promptSuggestions.clear();
+    });
+    // Capture the request after SDK context/forced-prompt projections, not its persisted replay.
+    const stream = this.inner.agent.streamFunction;
+    if (stream) {
+      const capture: typeof stream = (model, context, options) => {
+        // Compaction and summaries reuse this stream under their own routing ids. Like the
+        // SDK cache warmer, only session requests carry the context the next turn continues.
+        if (options?.sessionId === this.inner.sessionManager.getSessionId()) {
+          this.suggestionRequest = { model, messages: structuredClone(context.messages) };
+        }
+        return stream(model, context, options);
+      };
+      this.inner.agent.streamFunction = capture;
+      this.restoreSuggestionStream = () => {
+        if (this.inner.agent.streamFunction === capture) this.inner.agent.streamFunction = stream;
+      };
+    }
+    this.unsubscribeTransport = observeModelTransport(this.sessionId, (state) => {
+      this.emit({ type: "model_transport", state });
+    });
+    this.startedAt = Date.now();
+    this.unsubscribe = this.inner.subscribe((event: AgentEvent) => {
+      this.lastEventType = typeof event.type === "string" ? event.type : null;
+      this.lastEventAt = Date.now();
+      if (event.type === "agent_start") {
+        this.suggestionRequest = null;
+        this.promptSuggestions.clear();
+        this.suggestionAfterSettle = false;
+        this.agentRunNeedsCompletion = true;
+        this.lastRunAborted = false;
+      }
+      if (event.type === "agent_settled") {
+        this.lastRunAborted = event.aborted === true;
+        this.suggestionAfterSettle = !this.lastRunAborted;
+        if (this.activePrompt) this.activePrompt.result.aborted = this.lastRunAborted;
+      }
+      if (event.type === "message_end" && this.activePrompt) {
+        const message = event.message as {
+          role?: string; content?: unknown; stopReason?: string; errorMessage?: string;
+        } | undefined;
+
+// Original: apps/piweb/web/lib/rpc-manager.ts:744-802
+  private notifyAgentRunCompleteIfIdle(): void {
+    if (!this.agentRunNeedsCompletion || this.isRunning()) return;
+    this.agentRunNeedsCompletion = false;
+    const suggest = this.suggestionAfterSettle;
+    this.suggestionAfterSettle = false;
+    // A stopped run did not finish a task, as pi's own status reporting has it: nothing to announce.
+    if (this.suppressCompletionNotifications || this.lastRunAborted) return;
+    if (suggest) void this.startPromptSuggestion().catch((error: unknown) => {
+      console.error("[pi-web] prompt suggestion settings failed:", error instanceof Error ? error.message : error);
+    });
+    // A subagent of this session is still at work: each report starts a run here, and the run
+    // after the last one is the end of the task (#1434).
+    if (hasUnsettledSubagentRun(this.sessionId)) return;
+    try {
+      this.onAgentRunComplete?.(this.sessionId, this.inner.sessionManager.getSessionName());
+    } catch (error) {
+      console.error("[pi-web] completion listener failed:", error instanceof Error ? error.message : error);
+    }
+  }
+
+  private async startPromptSuggestion(): Promise<void> {
+    const inner = this.inner;
+    const selectedModel = inner.model;
+    const messages = inner.messages;
+    const complete = inner.modelRuntime?.completeSimple;
+    const request = this.suggestionRequest;
+    if (!selectedModel || !messages?.length || !complete || !request || inner.pendingMessageCount > 0) return;
+    const last = messages.at(-1);
+    if (last?.role !== "assistant" || last.stopReason !== "stop" ||
+        !last.content.some((block) => block.type === "text" && block.text.trim())) return;
+    const leaf = inner.sessionManager.getLeafId();
+    const revision = this.suggestionSettingsRevision;
+    const isCurrent = () => this.isAlive() && !this.isRunning() && inner.pendingMessageCount === 0 && inner.model === selectedModel &&
+      this.suggestionSettingsRevision === revision && this.suggestionRequest === request &&
+      inner.sessionManager.getLeafId() === leaf && inner.messages?.at(-1) === last;
+    const settings = await readPromptSuggestionSettings();
+    if (!settings.enabled || !isCurrent()) return;
+    const [api, models] = await Promise.all([
+      loadPromptSuggestionPlugin(),
+      sessionSuggestionModels(inner.modelRuntime as ModelRuntime, inner.settingsManager.getEnabledModels()),
+    ]);
+    if (!isCurrent()) return;
+    api.validatePredictionSelection(settings, models.map((item) => item.option));
+    const model = models.find((item) => item.option.provider === settings.provider && item.option.id === settings.modelId)!.model;
+    const compacted = api.buildCompactedSuggestionContext(inner.sessionManager.getBranch(), inner.sessionManager.buildSessionProjection().entries);
+    this.promptSuggestions.start({
+      enabled: true,
+      model,
+      thinkingLevel: settings.thinkingLevel,
+      preferences: settings.preferences,
+      messages: [...request.messages, last],
+      compaction: compacted && { id: compacted.id, messages: convertToLlm(compacted.messages) },
+      sessionId: this.sessionId,
+      agentDir: getAgentDir(),
+      revision: leaf ?? String(last.timestamp),
+      complete: (targetModel, context, options) => complete.call(inner.modelRuntime, targetModel, context, options),
+      isCurrent,
+    });
+  }
+
+// Original: apps/piweb/web/lib/rpc-manager.ts:1204-1212
+  onEvent(listener: EventListener): () => void {
+    this.listeners.add(listener);
+    for (const event of this.pendingUiRequests.values()) listener(event);
+    for (const event of this.activeToolEvents.values()) listener(event);
+    listener({ type: "prompt_suggestion", text: this.promptSuggestions.text });
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+// Original: apps/piweb/web/lib/rpc-manager.ts:1269-1289
+  async send(command: Record<string, unknown>, options?: SendOptions): Promise<unknown> {
+    const type = command.type as string;
+    if (type === "abort" && options?.promptOwner && this.activePrompt?.owner !== options.promptOwner) return null;
+    if (["prompt", "steer", "follow_up"].includes(type) && typeof command.message === "string" && isPromptSuggestionCommand(command.message)) {
+      if (!this.isAlive()) throw hostError("session_closing", "The session closed before the settings command.");
+      this.resetIdleTimer();
+      const ui = this.createExtensionUiContext();
+      const commandResult = await runPromptSuggestionCommand(command.message, {
+        cwd: this.cwd,
+        ui,
+        getModels: async () => (await sessionSuggestionModels(this.inner.modelRuntime as ModelRuntime, this.inner.settingsManager.getEnabledModels())).map((item) => item.option),
+      });
+      ui.notify(commandResult, "info");
+      return null;
+    }
+    // A status read (the chat's reconciliation, every few seconds while it runs) would hide the
+    // last command that did something; it never resets the idle timer either.
+    if (type !== "get_state") {
+      this.lastCommandType = typeof type === "string" ? type : null;
+      this.lastCommandAt = Date.now();
+    }
+
+// Original: apps/piweb/web/lib/rpc-manager.ts:1345-1358
+      }
+      // A session whose folder was deleted outside pi-web stays readable, but a
+      // run there would reach the model only for its tools to fail (and `write`
+      // to recreate the folder). The pi CLI does not resume such a session
+      // either; refuse as /api/agent/new does. (A `!` command already refuses.)
+      // Typed, so the route names the folder for the composer (#1422).
+      if (type === "prompt" && !existsSync(this.cwd)) {
+        throw cwdMissingError(this.cwd);
+      }
+
+      if (tracksMutation) this.promptSuggestions.clear();
+      switch (type) {
+      case "main_session_post": {
+        const release = await this.acquirePromptAdmission();
+
+// Original: apps/piweb/web/lib/rpc-manager.ts:2047-2056
+  destroy(): void {
+    if (!this._alive) return;
+    this.unsubscribeSuggestionSettings?.();
+    this.unsubscribeSuggestionSettings = null;
+    this.promptSuggestions.clear();
+    this.suggestionRequest = null;
+    this.restoreSuggestionStream?.();
+    this.restoreSuggestionStream = null;
+    this._alive = false;
+    this.extensionUiAbortController.abort();
