@@ -46,7 +46,7 @@
     "@earendil-works/pi-ai": "1.4.0",
     "@earendil-works/pi-coding-agent": "1.4.0",
     "@earendil-works/pi-tui": "1.4.0",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "@types/node": "25.5.0"
   },
   "license": "MIT",
