@@ -203,6 +203,34 @@ test("ghost rendering preserves text, focus marker, width, borders, and acceptan
   f.emit("session_shutdown");
 });
 
+test("terminal focus reports preserve a displayed candidate and Tab acceptance", async () => {
+  const f = await fixture();
+  await suggest(f);
+  for (const data of ["\x1b[O", "\x1b[I"]) {
+    f.editor.handleInput(data);
+    assert.equal(f.editor.getText(), "");
+    assert.ok(displayed(f.editor).includes("跑一下测试，再提交"));
+  }
+  f.editor.handleInput("\t");
+  assert.equal(f.editor.getText(), "跑一下测试，再提交");
+});
+
+test("terminal focus reports do not cancel an in-flight prediction", async () => {
+  const f = await fixture();
+  f.emit("agent_settled", { aborted: false });
+  await f.waitForRequests();
+  const request = f.requests[0];
+  for (const data of ["\x1b[O", "\x1b[I"]) {
+    f.editor.handleInput(data);
+    assert.equal(request.options.signal.aborted, false);
+  }
+  request.resolve(answer("切回窗口后仍可接受"));
+  await tick();
+  assert.ok(displayed(f.editor).includes("切回窗口后仍可接受"));
+  f.editor.handleInput("\t");
+  assert.equal(f.editor.getText(), "切回窗口后仍可接受");
+});
+
 test("TUI preserves request-only visible context without copying the foreground system prompt", async () => {
   const f = await fixture({ systemPrompt: "Forced current prompt" });
   const original = JSON.stringify(f.sessionManager.buildSessionProjection().messages);
